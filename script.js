@@ -150,12 +150,7 @@
                 // Add the octave cell for the last note
                 if ((i==xenFreqArray.length-1) && (xenScaleArray[i] != (octDivs-1))) {
                     var c0 = xenOctaveRow.insertCell(xenCounter);
-                    if ((i - octDivs) == (rootMIDI-1)) c0.setAttribute('id', "keyboardCenter");
-                    if (xenCounter == 0) {
-                        c0.setAttribute('colspan', i+1);
-                    } else {
-                        c0.setAttribute('colspan', xenCounter+1);
-                    }
+                    c0.setAttribute('colspan', xenScaleArray[i]+1);
                     c0.innerHTML = "xn. " + (xenCounter + 1);
                 }
 
