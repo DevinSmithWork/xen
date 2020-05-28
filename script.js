@@ -1,13 +1,474 @@
-        var rootMIDI;
-        var rootFreq;
-        var octDivs;
-        var octMult;
+//=============================
+// GLOBAL VARS
+//=============================
 
-        var octaveArray = [];
-        var noteArray = [];
-        var freqArray = [];
-        var xenScaleDegreeArray = [];
-        var midiFreqArray = [];
+    // HTML input fields
+    var rootMIDI;
+    var rootFreq;
+    var octDivs;
+    var octMult;
+
+    // Note & freq arrays
+    var xenScaleArray = [];
+    var xenFreqArray = [];
+
+
+
+//=============================
+// Scale calcs, dom, etc
+//=============================
+
+        //---------------------------
+        function initPage() {
+            loadVars();
+
+            makeXenArrays();
+
+            makeMidiTable();
+            makeScalaTable();
+            makeKeyMapTable();
+        }
+
+        //---------------------------
+        // Calls refresh functions
+        function refreshPage() {
+            loadVars();
+
+            makeXenArrays();
+            updateXenKeyboard();
+
+            makeMidiTable();
+            makeScalaTable();
+            makeKeyMapTable();
+        }
+
+
+
+
+        //---------------------------
+        // updates vars from input
+        function loadVars() {
+            rootMIDI = Number(document.getElementById("rootMIDI").value);
+            rootFreq = Number(document.getElementById("rootFreq").value);
+            octDivs = Number(document.getElementById("octDivs").value);
+            octMult = Number(document.getElementById("octMult").value);
+        }
+
+
+
+        // new version of makeMIDIFreqList
+        //--------------------------
+        function makeXenArrays() {
+            // Init xen scale and freq arrays
+            xenScaleArray = new Array(126);
+            xenFreqArray = new Array(126);
+            let midiIndex = rootMIDI;
+
+            //--------
+            // Loop through positive values first
+            let startFreq = rootFreq;
+            let endFreq = rootFreq * octMult;
+            let stepCounter = 0;
+
+            while (midiIndex < 128) {
+                xenScaleArray[midiIndex] = stepCounter;
+
+                // TK: multiple algos for calcing cFreq
+                let cFreq = startFreq + (((endFreq - startFreq)/(octDivs)) * stepCounter);
+                xenFreqArray[midiIndex] = cFreq;
+
+                // If this is the last step, reset stepCounter
+                if (stepCounter == octDivs-1) {
+                    startFreq = endFreq;
+                    endFreq = startFreq * octMult;
+                    stepCounter = 0;
+                } else {
+                    stepCounter++;
+                }
+
+                midiIndex++;
+            }
+
+            //--------
+            // Negative vals
+            midiIndex = rootMIDI-1;
+            startFreq = rootFreq;
+            endFreq = rootFreq / octMult;
+            stepCounter = octDivs-1;
+
+            while (midiIndex > -1) {
+                xenScaleArray[midiIndex] = stepCounter;
+
+                var cFreq = endFreq + (((startFreq - endFreq)/(octDivs)) * stepCounter);
+                xenFreqArray[midiIndex] = cFreq;
+
+                if (stepCounter == 0) {
+                    startFreq = endFreq;
+                    endFreq = startFreq / octMult;
+                    stepCounter = octDivs-1;
+                } else {
+                    stepCounter--;
+                }
+
+                midiIndex--;
+            }
+
+        }
+
+
+        //---------------------------
+        //new version of build KeyTables
+        function updateXenKeyboard() {
+
+            let keyTable = document.getElementById("key-table");
+
+            keyTable.deleteRow(0);
+            var xenOctaveRow = keyTable.insertRow(0);
+            xenOctaveRow.setAttribute("id", "xenOctaveRow", 0);
+
+            keyTable.deleteRow(1);
+            var xenScaleRow = keyTable.insertRow(1);
+            xenScaleRow.setAttribute("id", "xenScaleRow", 0);
+            
+            let octCounter = 0;
+            let xenCounter = 0;
+            for (var i=0;i<xenFreqArray.length;i++) {
+
+                if (xenScaleArray[i] == (octDivs-1)) {
+                    var c0 = xenOctaveRow.insertCell(xenCounter);
+                    if ((i - octDivs) == (rootMIDI-1)) c0.setAttribute('id', "keyboardCenter");
+                    if (xenCounter == 0) {
+                        c0.setAttribute('colspan', i+1);
+                    } else {
+                        c0.setAttribute('colspan', octDivs);
+                    }
+                    c0.innerHTML = "xn. " + (xenCounter + 1);
+                    xenCounter++;
+                }
+
+                var c1 = xenScaleRow.insertCell(i);
+                c1.innerHTML = (xenScaleArray[i]+1);
+            }
+
+            // Switch root note button
+            let oldRootArray = document.getElementsByClassName("rootButton");
+            oldRootArray[0].classList.remove("rootButton");
+
+            let newRoot = document.getElementById("k" + rootMIDI);
+            newRoot.classList.add("rootButton");
+
+            // Scroll to keep root MIDI note in view
+            let kContainer = document.getElementById("key-container");
+            let kCenter = document.getElementById("keyboardCenter");
+            scrollParentToChild(kContainer,kCenter);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //==============================
+        // Tables
+        //==============================
+
+        // MIDI table
+        function makeMidiTable() {
+            var table = document.createElement("TABLE");
+            table.setAttribute("class","midiTable",0);
+
+            for (var i=0;i<xenFreqArray.length;i++) {
+
+                var row = table.insertRow(i);
+
+                if (getBlackKey(i%12)) {
+                    row.classList.add("bKey");
+                }
+
+                // key icon
+                var cell0 = row.insertCell(0);
+                cell0.innerHTML = getPianoKey(i%12, (i==rootMIDI));
+
+                // note name
+                var cell1 = row.insertCell(1);
+                cell1.innerHTML = getNoteName(i%12);
+
+                // MIDI #
+                var cell2 = row.insertCell(2);
+                cell2.innerHTML = pad(i,3);
+
+                // Note freq
+                var cell3 = row.insertCell(3);
+                cell3.innerHTML = xenFreqArray[i].toFixed(5);
+
+                // Xen scale degree
+                var cell4 = row.insertCell(4);
+                cell4.innerHTML = xenScaleArray[i]+1;
+
+                // Freq. 8va
+                var cell5 = row.insertCell(5);
+                if (xenScaleArray[i]==0) cell5.innerHTML = "•";
+            }
+
+            if (document.getElementById("MIDI-list").firstChild != null) {
+                document.getElementById("MIDI-list").firstChild.remove();
+            }
+
+            document.getElementById("MIDI-list").append(table);
+        }
+
+
+        //----------------------------
+        // Scala tables
+        function makeScalaTable() {
+            var s = "! " + document.getElementById("scaleName").value + ".scl";
+            s += br();
+            s += document.getElementById("scaleDescription").value;
+            s += br();
+            s += "127"
+            s += br() + "!" + br();
+
+
+            for (var i=0;i<xenFreqArray.length;i++) {
+                s+=xenFreqArray[i].toFixed(5) + br();
+            }
+
+            document.getElementById("scala").innerHTML = s;
+        }
+
+
+        //----------------------------
+        // Keymap table
+        function makeKeyMapTable() {
+            var s = "! " + document.getElementById("scaleName").value + ".kbm";
+            s += "<br>!<br>";
+            // Pattern repeats
+            s += "127"
+            // First MIDI note remap
+            s += "0" + br();
+            // last MIDI note remap
+            s += "127" + br();
+
+            // Middle note
+            s += document.getElementById("rootMIDI").value + br();
+
+            // Refrence note
+            s += document.getElementById("rootMIDI").value + br();
+
+            // Refrence freq
+            s += document.getElementById("rootFreq").value + br();
+
+            for (var i=0;i<xenFreqArray.length;i++) {
+                s+=i + br();
+            }
+
+            document.getElementById("key-map").innerHTML = s;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //=========================
+        // Misc. Utilities
+        //=========================
+
+
+        //---------------
+        // returns note name
+        function getNoteName(x) {
+            var s="";
+            switch(x) {
+                case(0):
+                    s="C";
+                break;
+                case(1):
+                    s="C#";
+                break;
+                case(2):
+                    s="D";
+                break;
+                case(3):
+                    s="D#";
+                break;
+                case(4):
+                    s="E";
+                break;
+                case(5):
+                    s="F";
+                break;
+                case(6):
+                    s="F#";
+                break;
+                case(7):
+                    s="G";
+                break;
+                case(8):
+                    s="G#";
+                break;
+                case(9):
+                    s="A";
+                break;
+                case(10):
+                    s="A#";
+                break;
+                case(11):
+                    s="B";
+                break;
+            }
+            return(s);
+        }
+
+
+        //---------------
+        // returns piano key grahpic
+        function getPianoKey(x, rootM) {
+            var s="";
+            if (rootM) {
+               return("✭");
+            } else {
+                switch(x) {
+                    case(0):
+                        return("▵");
+                    break;
+                    case(1):
+                    case(3):
+                    case(6):
+                    case(8):
+                    case(10):
+                        return("◼︎");
+                    break;
+                    default:
+                        return("◻︎");
+                    break;
+                }
+            }
+        }
+
+
+        //------------------------
+        // Returns boolean
+        function getBlackKey(x) {
+            switch(x) {
+                case(1):
+                case(3):
+                case(6):
+                case(8):
+                case(10):
+                    return(true);
+                    break;
+                default:
+                    return(false);
+                    break;
+            }
+        }
+
+
+        // Adds line break
+        function br() {
+            return("<br>");
+        }
+
+
+        // Padding for numbers
+        function pad(num, size) {
+            var s = num+"";
+            while (s.length < size) s = "0" + s;
+            return s;
+        }
+
+
+        // Syncs slider and numerical values
+        function syncInputs(x, y, z) {
+            var slider = document.getElementById(x);
+            var input = document.getElementById(y);
+            if (z) {
+                input.value = slider.value;
+            } else {
+                slider.value = input.value;
+            }
+            makeScalaTable();
+            makeKeyMapTable();
+        }
+
+
+
+        //-----------------------
+        // scroll parent to child
+        // https://stackoverflow.com/questions/45408920/plain-javascript-scrollintoview-inside-div
+        function scrollParentToChild(parent, child) {
+          // Where is the parent on page
+          var parentRect = parent.getBoundingClientRect();
+          // What can you see?
+          var parentViewableArea = {
+            height: parent.clientHeight,
+            width: parent.clientWidth
+          };
+
+          // Where is the child
+          var childRect = child.getBoundingClientRect();
+          // Is the child viewable?
+          var isViewable = (childRect.left >= parentRect.left) && (childRect.left <= parentRect.left + parentViewableArea.width);
+
+          // if you can't see the child try to scroll parent
+          if (!isViewable) {
+            // scroll by offset relative to parent
+            parent.scrollLeft = (childRect.left + parent.scrollLeft) - parentRect.left - (parentViewableArea.width / 2)
+          }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -71,6 +532,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
         //=============================
         // Audio
         //=============================
@@ -118,9 +592,9 @@
                     osc.type = type;
 
                     osc.name = note;
-                    console.log(midiFreqArray[note]);
-                    osc.frequency.value = Number(midiFreqArray[note]);
-                    osc.frequency.setValueAtTime(midiFreqArray[note], audioContext.currentTime);
+                    console.log(xenFreqArray[note]);
+                    osc.frequency.value = Number(xenFreqArray[note]);
+                    osc.frequency.setValueAtTime(xenFreqArray[note], audioContext.currentTime);
 
                     oscArray[counter] = osc;
                     oscArray[counter].start();
@@ -133,6 +607,7 @@
             }
             updateOscGui();
         }
+
 
 
         //----------------------------
@@ -155,6 +630,8 @@
             }
             updateOscGui();
         }
+
+
 
         //----------------------------
         function killAll() {
@@ -188,526 +665,4 @@
 
         function chVolume(x) {
             masterGainNode.gain.setValueAtTime(x,audioContext.currentTime);
-        }
-
-
-
-
-
-
-
-
-
-
-        //=============================
-        // Scale calcs, dom, etc
-        //=============================
-
-        //---------------------------
-        // Calls refresh functions
-        function refreshPage() {
-                loadVars();
-                makeMIDIFreqList();
-                makeScalaOutput2();
-                makeKeyMapOutput2();
-        }
-
-
-        //---------------------------
-        // updates vars from input
-        function loadVars() {
-            rootMIDI = Number(document.getElementById("rootMIDI").value);
-
-            rootFreq = Number(document.getElementById("rootFreq").value);
-
-            octDivs = Number(document.getElementById("octDivs").value);
-
-            octMult = Number(document.getElementById("octMult").value);
-        }
-
-
-        //---------------------------
-        // Updates MIDI Freqs
-        function makeMIDIFreqList() {
-            midiFreqArray = new Array(126);
-            var midiIndex = rootMIDI;
-
-            var oArray = new Array(126);
-            oArray[midiIndex] = true;
-
-            xenScaleDegreeArray = new Array(126);
-
-            // Positive vals
-            var startFreq = rootFreq;
-            var endFreq = rootFreq * octMult;
-            var stepCounter = 0;
-
-            while (midiIndex < 128) {
-                xenScaleDegreeArray[midiIndex] = stepCounter;
-
-                var cFreq = startFreq + (((endFreq - startFreq)/(octDivs)) * stepCounter);
-                midiFreqArray[midiIndex] = cFreq;
-
-                // If you're on the last step, reset
-                if (stepCounter == octDivs-1) {
-                    startFreq = endFreq;
-                    endFreq = startFreq * octMult;
-                    stepCounter = 0;
-                    oArray[midiIndex+1] = true;
-                } else {
-                    stepCounter++;
-                }
-
-                midiIndex++;
-            }
-
-            // Negative vals
-            midiIndex = rootMIDI-1;
-            var startFreq = rootFreq;
-            var endFreq = rootFreq / octMult;
-            var stepCounter = octDivs-1;
-
-            while (midiIndex > -1) {
-                xenScaleDegreeArray[midiIndex] = stepCounter;
-
-                var cFreq = endFreq + (((startFreq - endFreq)/(octDivs)) * stepCounter);
-                midiFreqArray[midiIndex] = cFreq;
-
-                if (stepCounter == 0) {
-                    startFreq = endFreq;
-                    endFreq = startFreq / octMult;
-                    stepCounter = octDivs-1;
-                    oArray[midiIndex] = true;
-                } else {
-                    stepCounter--;
-                }
-
-                midiIndex--;
-            }
-
-
-            // Only need to build the MIDI stuff once.
-
-            // Builds the keyboard table
-            var keyTable = document.createElement("TABLE");
-            keyTable.setAttribute("id","key-table",0);
-
-            var xenOctaveRow = keyTable.insertRow(0);
-            xenOctaveRow.setAttribute("id", "xenOctaveRow", 0);
-
-            var xenScaleRow = keyTable.insertRow(1);
-            xenScaleRow.setAttribute("id", "xenScaleRow", 0);
-            
-            var keyRow = keyTable.insertRow(2);
-            keyRow.setAttribute("id", "keyRow", 0);
-            
-            var noteRow = keyTable.insertRow(3);
-            noteRow.setAttribute("id", "noteRow", 0);
-
-            var octRow = keyTable.insertRow(4);
-            octRow.setAttribute("id", "octRow", 0);
-            
-            let octCounter = 0;
-            let xenCounter = 0;
-            for (var i=0;i<midiFreqArray.length;i++) {
-
-                if (xenScaleDegreeArray[i] == (octDivs-1)) {
-                    var c0 = xenOctaveRow.insertCell(xenCounter);
-                    if ((i - octDivs) == (rootMIDI-1)) c0.setAttribute('id', "keyboardCenter");
-                    if (xenCounter == 0) {
-                        c0.setAttribute('colspan', i+1);
-                    } else {
-                        c0.setAttribute('colspan', octDivs);
-                    }
-                    c0.innerHTML = "xn. " + (xenCounter + 1);
-                    xenCounter++;
-                }
-
-                var c1 = xenScaleRow.insertCell(i);
-                c1.innerHTML = (xenScaleDegreeArray[i]+1);
-
-                var c2 = keyRow.insertCell(i);
-                var keyButton = document.createElement("BUTTON");
-                keyButton.setAttribute("id", "k"+i, 0);
-                if (getBlackKey(i%12)) {
-                    keyButton.setAttribute("class", "kk bk", 0);
-                } else {
-                    keyButton.setAttribute("class", "kk wk", 0);
-                }
-                if (i==rootMIDI) keyButton.classList.add("rootButton");
-                c2.append(keyButton);
-
-                var c3 = noteRow.insertCell(i);
-                c3.innerHTML = getNoteName(i%12);
-
-                if (i%12==0) {
-                    var c4 = octRow.insertCell(octCounter);
-                    c4.setAttribute('colspan', 12);
-                    c4.innerHTML = (octCounter -1);
-                    octCounter++;
-                }
-
-
-
-            }
-
-            if (document.getElementById("key-div").firstChild != null) {
-                document.getElementById("key-div").firstChild.remove();
-            }
-
-            document.getElementById("key-div").append(keyTable);
-
-            // Scroll to keep root MIDI note in view
-            let kContainer = document.getElementById("key-container");
-            let kCenter = document.getElementById("keyboardCenter");
-            scrollParentToChild(kContainer,kCenter);
-
-
-            // Build the MIDI table
-            var table = document.createElement("TABLE");
-            table.setAttribute("class","midiTable",0);
-
-            let tableArray = [];
-            let centerTable;
-
-            for (var i=0;i<midiFreqArray.length;i++) {
-            // for (var i=(midiFreqArray.length-1);i==0;i--) {
-
-                if (i==rootMIDI) {
-                    centerTable = tableArray.length+1;
-                }
-
-                if (oArray[i]) {
-                    //document.getElementById("MIDI-list").append(table);
-                    // tableArray.push(table);
-                    // table = document.createElement("TABLE");
-                    // table.setAttribute("class","midiTable",0);
-                }
-
-                var row = table.insertRow(0);
-                //row.setAttribute("id", i, 0);
-                if (getBlackKey(i%12)) {
-                    row.classList.add("bKey");
-                }
-
-                if (oArray[i]) {
-                    row.classList.add("freqKey");
-                }
-
-                // key icon
-                var cell0 = row.insertCell(0);
-                cell0.innerHTML = getPianoKey(i%12, (i==rootMIDI));
-
-                // note name
-                var cell1 = row.insertCell(1);
-                cell1.innerHTML = getNoteName(i%12);
-
-                // MIDI #
-                var cell2 = row.insertCell(2);
-                cell2.innerHTML = pad(i,3);
-
-                // Note freq
-                var cell3 = row.insertCell(3);
-                cell3.innerHTML = midiFreqArray[i].toFixed(5);
-
-                // Freq. 8va
-                var cell4 = row.insertCell(4);
-                if (oArray[i]) cell4.innerHTML = "•";
-            }
-
-            // tableArray.push(table);
-
-            // document.getElementById("MIDI-list").innerHTML = "";
-
-            // for (var i=centerTable;i<tableArray.length;i++) {
-            //     document.getElementById("MIDI-list").append(tableArray[i]);
-            // }
-
-            // document.getElementById("MIDI-list").append(document.createElement("BR"));
-
-            // for (var i=centerTable-1;i>-1;i--) {
-            //     document.getElementById("MIDI-list").append(tableArray[i]);
-            // }
-
-            if (document.getElementById("MIDI-list").firstChild != null) {
-                document.getElementById("MIDI-list").firstChild.remove();
-            }
-
-            document.getElementById("MIDI-list").append(table);
-
-        }
-
-
-
-
-
-
-        //-----------------------
-        // scroll parent to child
-        // https://stackoverflow.com/questions/45408920/plain-javascript-scrollintoview-inside-div
-        function scrollParentToChild(parent, child) {
-          // Where is the parent on page
-          var parentRect = parent.getBoundingClientRect();
-          // What can you see?
-          var parentViewableArea = {
-            height: parent.clientHeight,
-            width: parent.clientWidth
-          };
-
-          // Where is the child
-          var childRect = child.getBoundingClientRect();
-          // Is the child viewable?
-          var isViewable = (childRect.left >= parentRect.left) && (childRect.left <= parentRect.left + parentViewableArea.width);
-
-          // if you can't see the child try to scroll parent
-          if (!isViewable) {
-            // scroll by offset relative to parent
-            parent.scrollLeft = (childRect.left + parent.scrollLeft) - parentRect.left - (parentViewableArea.width / 2)
-          }
-        }
-
-
-
-        //---------------
-        // returns note name
-        function getNoteName(x) {
-            var s="";
-            switch(x) {
-                case(0):
-                    s="C";
-                break;
-                case(1):
-                    s="C#";
-                break;
-                case(2):
-                    s="D";
-                break;
-                case(3):
-                    s="D#";
-                break;
-                case(4):
-                    s="E";
-                break;
-                case(5):
-                    s="F";
-                break;
-                case(6):
-                    s="F#";
-                break;
-                case(7):
-                    s="G";
-                break;
-                case(8):
-                    s="G#";
-                break;
-                case(9):
-                    s="A";
-                break;
-                case(10):
-                    s="A#";
-                break;
-                case(11):
-                    s="B";
-                break;
-            }
-            return(s);
-        }
-
-        //---------------
-        // returns piano key grahpic
-        function getPianoKey(x, rootM) {
-            var s="";
-            if (rootM) {
-               return("✭");
-            } else {
-                switch(x) {
-                    case(0):
-                        return("▵");
-                    break;
-                    case(1):
-                    case(3):
-                    case(6):
-                    case(8):
-                    case(10):
-                        return("◼︎");
-                    break;
-                    default:
-                        return("◻︎");
-                    break;
-                }
-            }
-        }
-
-
-
-
-        //------------------------
-        // Returns boolean
-        function getBlackKey(x) {
-            switch(x) {
-                case(1):
-                case(3):
-                case(6):
-                case(8):
-                case(10):
-                    return(true);
-                    break;
-                default:
-                    return(false);
-                    break;
-            }
-        }
-
-
-        //--------------------
-        function makeScalaOutput() {
-            var s = "! " + document.getElementById("scaleName").value + ".scl";
-            s += br();
-            s += document.getElementById("scaleDescription").value;
-            s += br();
-            s += document.getElementById("octDivs").value;
-            s += br() + "!" + br();
-
-            //create the frequency divisions
-            var octDivs = Number(document.getElementById("octDivs").value);
-
-            var rootFreq = Number(document.getElementById("rootFreq").value);
-
-            var octEnd = rootFreq * 2;
-
-            var equalFreqStep = (octEnd - rootFreq) / (octDivs-1);
-
-            freqArray = [];
-            for (var i=0;i<octDivs;i++) {
-                var freq = (rootFreq + (equalFreqStep * i)).toFixed(5);
-                freqArray.push(freq);
-                s += freq;
-                s += br();
-            }
-
-            document.getElementById("scala").innerHTML = s;
-        }
-
-
-
-        function makeKeyMapOutput() {
-            var s = "! " + document.getElementById("scaleName").value + ".kbm";
-            s += "<br>!<br>";
-            // Pattern repeats
-            s += document.getElementById("octDivs").value + br();
-            // First MIDI note remap
-            s += "0" + br();
-            // last MIDI note remap
-            s += "126" + br();
-
-            // Middle note
-            s += document.getElementById("rootMIDI").value + br();
-
-            // Refrence note
-            s += document.getElementById("rootMIDI").value + br();
-
-            // Refrence freq
-            s += document.getElementById("rootFreq").value + br();
-
-            var octDivs = Number(document.getElementById("octDivs").value);
-
-
-            for (var i=0;i<octDivs;i++) {
-                s+=i + br();
-            }
-            
-
-            document.getElementById("key-map").innerHTML = s;
-        }
-        
-
-
-
-
-        function makeScalaOutput2() {
-            var s = "! " + document.getElementById("scaleName").value + ".scl";
-            s += br();
-            s += document.getElementById("scaleDescription").value;
-            s += br();
-            s += "127"
-            s += br() + "!" + br();
-
-
-            for (var i=0;i<midiFreqArray.length;i++) {
-                s+=midiFreqArray[i].toFixed(5) + br();
-            }
-
-            document.getElementById("scala").innerHTML = s;
-        }
-
-
-        function makeKeyMapOutput2() {
-            var s = "! " + document.getElementById("scaleName").value + ".kbm";
-            s += "<br>!<br>";
-            // Pattern repeats
-            s += "127"
-            // First MIDI note remap
-            s += "0" + br();
-            // last MIDI note remap
-            s += "127" + br();
-
-            // Middle note
-            s += document.getElementById("rootMIDI").value + br();
-
-            // Refrence note
-            s += document.getElementById("rootMIDI").value + br();
-
-            // Refrence freq
-            s += document.getElementById("rootFreq").value + br();
-
-            for (var i=0;i<midiFreqArray.length;i++) {
-                s+=i + br();
-            }
-
-            document.getElementById("key-map").innerHTML = s;
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-        function br() {
-            return("<br>");
-        }
-
-
-
-        function pad(num, size) {
-            var s = num+"";
-            while (s.length < size) s = "0" + s;
-            return s;
-        }
-
-
-        function padSpace(num, size) {
-            var s = num+"";
-            while (s.length < size) s = "\xa0" + s;
-            return s;
-        }
-
-
-
-
-        function syncInputs(x, y, z) {
-            var slider = document.getElementById(x);
-            var input = document.getElementById(y);
-            if (z) {
-                input.value = slider.value;
-            } else {
-                slider.value = input.value;
-            }
-            makeScalaOutput();
-            makeKeyMapOutput();
         }

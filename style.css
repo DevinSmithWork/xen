@@ -161,14 +161,8 @@ label {
    }
 
    button:active {
-   	background-color: deeppink;
-   	color:lightyellow;
-   }
-
-   #kill {
-    position:sticky;
-    position: sticky;
-    top: 0;
+   	background-color: yellow;
+   	border:0.25em inset deeppink;
    }
 
 
@@ -176,45 +170,35 @@ label {
 
    /* MIDI table styling--------*/
    .midiTable {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    display:inline-block;
-    padding:0.25em;
-    margin:0.5em;
-    /*font-size:small;*/
-
-    border:0.25em solid deeppink;
-    box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-
+	    border-collapse: collapse;
+	    border-spacing: 0px;
+	    display:inline-block;
+	    padding:0.25em;
+	    margin:0.5em;
+	    border:0.25em solid deeppink;
+	    box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
    }
 
    .midiTable td {
    	vertical-align: top;
+   	text-align: right;
+   	padding:0em 0.5em;
    }
 
-   .midiTable tbody>tr>:nth-child(0){
-    width:2em;
+   .midiTable tbody>tr>:nth-child(2){
     text-align: left;
-
    }
 
-   .midiTable tbody>tr>:nth-child(3){
-    padding:0em 1em;
-   }
-
-   .midiTable tbody>tr>:nth-child(4){
-    text-align: right;
+	.midiTable tbody>tr>:nth-child(4){
+    border-left:1px solid rgba(255,255,255,0.5);
+    border-right:1px solid rgba(255,255,255,0.5);
    }
 
    .bKey {
    	background:rgba(255,255,255,0.25);
    }
 
-   tr.freqKey td {
-   	border-bottom:2px solid deeppink;
-   	/*padding-bottom:1em;*/
-   }
-
+   /*Key button div*/
    #key-container {
    	overflow-x: scroll;
    }
@@ -239,6 +223,10 @@ label {
    .kk {
    	height:3em;
    	border:2px outset deeppink;
+   }
+
+   .kk:active {
+   	border:2px inset deeppink;
    }
 
    .wk {
