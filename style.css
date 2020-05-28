@@ -9,251 +9,244 @@
 	    text-transform: uppercase;
 	    text-align: center;
 
-	    
-
 	    padding-bottom:3em;
 	}
 
-	h1 {
-		/*padding-bottom:0em;*/
-		/*margin-bottom:0em;*/
-	}
 
-	.top {
-		margin-top:0em;
-	}
 
-	h2 {
-		padding-top:1.5em;
-	}
 
+	/*--------------------------------*/
+	/* General styles */
 	.main {
+	    max-width: 800px;
+	    margin:0px auto;
+
 	    display:flex;
 	    justify-content: space-evenly;
 	    flex-wrap:wrap;
-	    /*float:right;*/
-
-	    max-width: 800px;
-		    margin:0px auto;
 	}
 
-	.ouput-div {
-		/*float:left;*/
+	.bd {
+		margin:0.25em;
+	    padding:0.25em;
+    	border:0.25em solid deeppink;
+    	box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
 	}
 
-.input-div {
-    padding:0.25em;
-    border:0.25em solid deeppink;
-    box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-    margin:0.25em;
-    flex-grow:1;
-    text-align: center;
+	.tbd {
+		background:yellow;
+		max-width:400px;
+		margin:0px auto;
+	}
+
+   	.fullWidth {
+    	width:100%;
+   	}
+
+	.hide {
+		display:none;
+	}
 
 
 
 
-/*
-background: rgba(255,255,0,0.5);
-background: -moz-linear-gradient(-45deg, rgba(255,255,0,0.5) 0%, rgba(0,255,255,0.5) 100%);
-background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(255,255,0,0.5)), color-stop(100%, rgba(0,255,255,0.5)));
-background: -webkit-linear-gradient(-45deg, rgba(255,255,0,0.5) 0%, rgba(0,255,255,0.5) 100%);
-background: -o-linear-gradient(-45deg, rgba(255,255,0,0.5) 0%, rgba(0,255,255,0.5) 100%);
-background: -ms-linear-gradient(-45deg, rgba(255,255,0,0.5) 0%, rgba(0,255,255,0.5) 100%);
-background: linear-gradient(135deg, rgba(255,255,0,0.5) 0%, rgba(0,255,255,0.5) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff00', endColorstr='#00ffff', GradientType=1 );
 
-*/
-
-}
-
-.osc-divs {
-    padding:0.25em;
-    border:0.25em solid deeppink;
-    box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-    margin:0.25em;
-    flex-grow:1;
-    text-align: center;
-    width:fixed;
-}
-
-
-.tbd {
-	background:yellow;
-	max-width:400px;
-	margin:0px auto;
-	font-size:smaller;
-}
-
-.large {
-	font-size:1em;
-}
-
-
-.full-width {
-    width:95%;
-}
-
-input {
-    display:block;
-    /*box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;*/
-    font-family: robotto mono, andale mono, monospace;
-    width:7em;
-    font-size: large;
-
-    color:deeppink;
-    text-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-    background:rgba(255,255,255,0.6);
-
-}
-
-label {
-    display:block;
-    font-weight: bold;
-   }
-
-   .output-list {
-        padding:0.25em;
-        border:0.25em solid deeppink;
-        box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-        margin:0.25em 0em;
-   }
-
-
-
-   h3 {
-    padding-bottom:0em;
-    margin-bottom:0em;
-    text-align: center;
-   }
-
-   .output-div {
-     display:flex;
-     justify-content: space-evenly;
-     flex-wrap: wrap;
-   }
-
-   .output-cell {
-     text-align: left;
-   }
-
-   .table-div {
-    display:table;
-   }
-   .cell-div {
-    display:table-cell;
-   }
-
-   .hide {
-    display:none;
-   }
-
-   button {
-    padding:0.25em 0.5em;
-    border:0.25em outset deeppink;
-
-    box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-    font-family: robotto mono, andale mono, monospace;
-    font-size: large;
-
-    color:deeppink;
-    text-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-    background:rgba(255,255,255,0.6);
-   }
-
-   button:active {
-   	background-color: yellow;
-   	border:0.25em inset deeppink;
-   }
+	/*--------------------------------*/
+	/* Headings */
+	h1 {}
+	h2 {
+		padding-top:1.5em;
+	}
+	h3 {
+	    padding-bottom:0em;
+	    margin-bottom:0em;
+	    text-align: center;
+    }
 
 
 
 
-   /* MIDI table styling--------*/
-   .midiTable {
+	/*--------------------------------*/
+    /* Buttons */
+   	button {
+		padding:0.25em 0.5em;
+		border:0.25em outset deeppink;
+
+		box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
+		font-family: robotto mono, andale mono, monospace;
+		font-size: large;
+
+		color:deeppink;
+		text-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
+		background:rgba(255,255,255,0.6);
+   	}
+
+	button:active {
+		background-color: yellow;
+		border:0.25em inset deeppink;
+	}
+
+
+
+
+
+	/*--------------------------------*/
+	/* Inputs */
+	.input-div {
+	    flex-grow:1;
+	    text-align: center;
+	}
+
+	input {
+	    font-family: robotto mono, andale mono, monospace;
+	    width:7em;
+	    font-size: large;
+
+	    background:rgba(255,255,255,0.6);
+	    box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
+
+	    color:deeppink;
+	    text-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
+
+	    display:block;
+	}
+
+	label {
+	    display:block;
+	    font-weight: bold;
+   	}
+
+	.smallInput {
+		width:4em;
+	}
+
+   	.slider {
+   		box-shadow: none;
+   	}
+
+   	input[type = text] {
+   		box-sizing:border-box
+   	}
+
+
+
+
+
+   	/*--------------------------------*/
+	/* Key table styles*/
+	#key-container {
+		overflow-x: scroll;
+	}
+
+	#key-table td {
+		text-align: center;
+		vertical-align: top;
+	}
+
+	#xenOctaveRow td {
+		border-bottom:3px solid rgba(255,20,147,0.25);
+		background: rgba(255,255,255,0.5);
+		text-align: center;
+	}
+
+	#octRow td {
+		border-top:3px solid rgba(255,20,147,0.25);
+		background: rgba(255,255,255,0.5);
+		text-align: center;
+	}
+
+	.kk {
+		border:2px outset deeppink;
+		height:3em;
+	}
+
+	.kk:active {
+		border:2px inset deeppink;
+	}
+
+	.wk {
+		background-color: rgba(255,255,255,0.25);
+	}
+
+	.bk {
+		background-color: rgba(0,0,0,0.25);
+		height:2.5em;
+	}
+
+	.rootButton {
+		background-color:yellow;
+	}
+
+
+
+
+
+
+
+	/*--------------------------------*/
+	/* Oscilator styles */
+	.osc-divs {
+	    flex-grow:1;
+	    text-align: center;
+	    width:fixed;
+	}
+
+
+
+
+
+
+
+	/*--------------------------------*/
+	/* Oscilator styles */
+	.output-div {
+		display:flex;
+		justify-content: space-evenly;
+		flex-wrap: wrap;
+	}
+
+	.output-cell {
+		text-align: left;
+	}
+
+
+
+
+
+
+
+
+	/* MIDI table styling--------*/
+	.midiTable {
 	    border-collapse: collapse;
 	    border-spacing: 0px;
 	    display:inline-block;
-	    padding:0.25em;
-	    margin:0.5em;
-	    border:0.25em solid deeppink;
-	    box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-   }
+	}
 
-   .midiTable td {
-   	vertical-align: top;
-   	text-align: right;
-   	padding:0em 0.5em;
-   }
+	.midiTable td {
+		vertical-align: top;
+		text-align: right;
+		padding:0em 0.5em;
+	}
 
-   .midiTable tbody>tr>:nth-child(2){
-    text-align: left;
-   }
+	.midiTable tbody>tr>:nth-child(2){
+		text-align: left;
+	}
 
 	.midiTable tbody>tr>:nth-child(4){
-    border-left:1px solid rgba(255,255,255,0.5);
-    border-right:1px solid rgba(255,255,255,0.5);
-   }
+		border-left:1px solid rgba(255,255,255,0.5);
+		border-right:1px solid rgba(255,255,255,0.5);
+	}
 
-   .bKey {
-   	background:rgba(255,255,255,0.25);
-   }
+	.bKey {
+		/*background:black;*/
+	}
 
-   /*Key button div*/
-   #key-container {
-   	overflow-x: scroll;
-   }
+	.wKey {
+		background:rgba(255,255,255,0.25);
+	}
 
-   #key-table td {
-   	text-align: center;
-   	vertical-align: top;
-   }
 
-   #xenOctaveRow td {
-   	border-bottom:3px solid rgba(255,20,147,0.25);
-   	background: rgba(255,255,255,0.5);
-   	text-align: center;
-   }
-
-   #octRow td {
-   	border-top:3px solid rgba(255,20,147,0.25);
-   	background: rgba(255,255,255,0.5);
-   	text-align: center;
-   }
-
-   .kk {
-   	height:3em;
-   	border:2px outset deeppink;
-   }
-
-   .kk:active {
-   	border:2px inset deeppink;
-   }
-
-   .wk {
-   	background-color: rgba(255,255,255,0.25);
-   }
-
-   .bk {
-   	background-color: rgba(0,0,0,0.25);
-   	height:2em;
-   }
-
-   .rootButton {
-   	background-color:yellow;
-   }
-
-   #volumeSlider {
-   	width:100%;
-   }
-
-   .full-slider {
-   	padding:0.25em;
-    border:0.25em solid deeppink;
-    box-shadow: 1px 1px 1px aqua, -1px -1px 1px yellow;
-    margin:0.25em;
-    text-align: center;
-    width:100%;
-   }
 
 </style>
 </head>

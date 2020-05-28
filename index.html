@@ -33,9 +33,6 @@
             text-transform: uppercase;
             text-align: center;
 
-/*            max-width: 800px;
-            margin:0px auto;*/
-
             padding-bottom:3em;
         }
     </style>
@@ -60,10 +57,9 @@
     -->
 
     <h1>XENNY FROM THE BLOCK</h1>
-    <!-- <p class="">Don't be fooled by the rocks that I got / I'm just a tool for building &amp; demoing xenharmonic scales</p> -->
-    <p class="tbd large">Don't be fooled by the rocks that I got<br>I'm just a tool for building &amp; demoing xenharmonic scales.</p>
+    <p class="tbd">Don't be fooled by the rocks that I got<br>I'm just a tool for building &amp; demoing xenharmonic scales.</p>
     <br>
-    <p class="tbd large">This is a work in progress &amp; there's still a lot of kinks to work out.<br><a href="mailto:devin.smith.work@gmail.com">Email me</a> if you have feedback.</p>
+    <p class="tbd">This is a work in progress &amp; there's still a lot of kinks to work out.<br><a href="mailto:devin.smith.work@gmail.com">Email me</a> if you have feedback.</p>
     <!-- 
     <p>
         <b>ABOUT:</b> This is a tool for creating Scala .SCA and .KYB files for xenharmonic scales in equal divisions of "variable octaves."
@@ -86,27 +82,26 @@
     <p class="tbd">
         Right now this is only EDO.<br>TBD: algo select for xen freq.<br>(option for fn = 2n/12*440 Hz, etc)
     </p>
-    <div class="main">
 
-        <div class="input-div">
+    <div class="main">
+        <div class="input-div bd">
             <label for="rootMIDI">Root MIDI #</label>
-            <input id="rootMIDI" type="number"  min="0" max="126" value="60" onchange="refreshPage();"></input>
+            <input id="rootMIDI" class="smallInput" type="number"  min="0" max="126" value="60" onchange="refreshPage();"></input>
         </div>
 
-
-        <div class="input-div">
+        <div class="input-div bd">
             <label for="rootFreq">Root Freq.</label>
             <input id="rootFreq" type="number"  min="1" max="20000" step="0.00001" value="261.63000" onchange="refreshPage();"></input>
         </div>
 
-        <div class="input-div">
+        <div class="input-div bd">
             <label for="octDivs">8va Divs.</label>
-            <input id="octDivs" type="number"  min="1" max="100" value="12" onchange="refreshPage();"></input>
+            <input id="octDivs" class="smallInput" type="number"  min="1" max="100" value="12" onchange="refreshPage();"></input>
         </div>
 
-        <div class="input-div">
+        <div class="input-div bd">
             <label for="octave">8va Mult.</label>
-            <input id="octMult" type="number"  min="0.01" max="10" value="2.00" step="0.01" onchange="refreshPage();"></input>
+            <input id="octMult" class="smallInput" type="number"  min="0.01" max="10" value="2.00" step="0.01" onchange="refreshPage();"></input>
         </div>
 
     </div>
@@ -115,7 +110,7 @@
 
 
     <!-- KEY DIV -->
-    <div class="input-div grow" id="key-container">
+    <div class="input-div bd grow" id="key-container">
         <div id="key-div">
             <table id="key-table">
                 <tbody>
@@ -152,17 +147,19 @@
     <p>WEB MIDI support: Chrome, Edge, Opera, Android web viewer</p>
     <p class="tbd">TBD: lol like everything. I'll prolly end up implement a library like Tone.js or something</p>
     <div class="main">
-        <div class="full-slider">
+        <div class="fullWidth bd">
             <label for="volumeSlider">VOLUME</label>
-            <input type="range" id="volumeSlider" min="0.000" max="0.500" step="0.001" value="0.150" oninput="chVolume(this.value);">
+            <input type="range" id="volumeSlider" class="fullWidth slider" min="0.000" max="0.500" step="0.001" value="0.150" oninput="chVolume(this.value);">
         </div>
-        <div class="osc-divs">
+
+        <div class="osc-divs bd">
             <div id="osc0"></div>
             <div id="osc1"></div>
             <div id="osc2"></div>
             <div id="osc3"></div>
         </div>
-        <div class="osc-divs">
+
+        <div class="osc-divs bd">
             <div id="osc4"></div>
             <div id="osc5"></div>
             <div id="osc6"></div>
@@ -182,32 +179,31 @@
         TBD: Doublecheck Scala output on something.
     </div>
     <div class="main">
-        <div class="input-div grow">
+        <div class="input-div bd grow">
             <label for="scale-name">File Name</label>
-            <input class="full-width"  type="text" id="scaleName" value="My-Scale">
+            <input class="fullWidth" type="text" id="scaleName" value="My-Scale">
         </div>
 
-        <div class="input-div grow">
+        <div class="input-div bd grow">
             <label for="scale-description">Scale Descrip.</label>
-            <input class="full-width" type="text" id="scaleDescription" value="It's the best">
+            <input class="fullWidth" type="text" id="scaleDescription" value="It's the best">
         </div>
     </div>
 
     <div class="output-div">
-
         <div class="output-cell grow">
             <h3>MIDI# Freq:</h3>
-            <div id="MIDI-list"></div>
+            <div class="bd" id="MIDI-list"></div>
         </div>
 
         <div class="output-cell grow">
             <h3>Scala .scl:</h3>
-            <div class="output-list" id="scala"></div>
+            <div class="bd" id="scala"></div>
         </div>
 
         <div class="output-cell grow">
             <h3>Scala .kbm:</h3>
-            <div class="output-list" id="key-map"></div>
+            <div class="bd" id="key-map"></div>
         </div>
     </div>
 

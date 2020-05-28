@@ -184,13 +184,6 @@
 
 
 
-
-
-
-
-
-
-
         //==============================
         // Tables
         //==============================
@@ -204,8 +197,12 @@
 
                 var row = table.insertRow(i);
 
-                if (getBlackKey(i%12)) {
-                    row.classList.add("bKey");
+                // if (getBlackKey(i%12)) {
+                //     row.classList.add("bKey");
+                // }
+
+                if (!getBlackKey(i%12)) {
+                    row.classList.add("wKey");
                 }
 
                 // key icon
@@ -305,9 +302,11 @@
 
 
 
+
         //=========================
         // Misc. Utilities
         //=========================
+
 
 
         //---------------
@@ -485,8 +484,7 @@
             console.log('WebMIDI is not supported in this browser.');
         }
 
-        navigator.requestMIDIAccess()
-            .then(onMIDISuccess, onMIDIFailure);
+        navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
 
         function onMIDIFailure() {
             console.log('Could not access your MIDI devices.');
@@ -498,7 +496,6 @@
         }
 
         function getMIDIMessage(message) {
-            //console.log(message);
             var command = message.data[0];
             var note = message.data[1];
             var velocity = (message.data.length > 2) ? message.data[2] : 0; // a velocity value might not be included with a noteOff command
@@ -564,7 +561,6 @@
             masterGainNode = audioContext.createGain();
             masterGainNode.connect(audioContext.destination);
 
-            //masterGainNode.gain.value = 0.20;
             masterGainNode.gain.setValueAtTime(0.2,audioContext.currentTime);
 
             sineTerms = new Float32Array([0, 0, 1, 0, 1]);
@@ -599,7 +595,6 @@
                     oscArray[counter] = osc;
                     oscArray[counter].start();
 
-                    //osc.start();
                     found = true;
                 } else {
                     counter++;
