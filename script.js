@@ -117,7 +117,7 @@
 
 
         //---------------------------
-        //new version of build KeyTables
+        // New version of build KeyTables
         function updateXenKeyboard() {
 
             let keyTable = document.getElementById("key-table");
@@ -134,6 +134,7 @@
             let xenCounter = 0;
             for (var i=0;i<xenFreqArray.length;i++) {
 
+                // If we're at the start of a new xen octave, add an octave cell
                 if (xenScaleArray[i] == (octDivs-1)) {
                     var c0 = xenOctaveRow.insertCell(xenCounter);
                     if ((i - octDivs) == (rootMIDI-1)) c0.setAttribute('id', "keyboardCenter");
@@ -146,6 +147,19 @@
                     xenCounter++;
                 }
 
+                // Add the octave cell for the last note
+                if ((i==xenFreqArray.length-1) && (xenScaleArray[i] != (octDivs-1))) {
+                    var c0 = xenOctaveRow.insertCell(xenCounter);
+                    if ((i - octDivs) == (rootMIDI-1)) c0.setAttribute('id', "keyboardCenter");
+                    if (xenCounter == 0) {
+                        c0.setAttribute('colspan', i+1);
+                    } else {
+                        c0.setAttribute('colspan', xenCounter+1);
+                    }
+                    c0.innerHTML = "xn. " + (xenCounter + 1);
+                }
+
+                // Insert xen scale degree cell
                 var c1 = xenScaleRow.insertCell(i);
                 c1.innerHTML = (xenScaleArray[i]+1);
             }
@@ -197,10 +211,7 @@
 
                 var row = table.insertRow(i);
 
-                // if (getBlackKey(i%12)) {
-                //     row.classList.add("bKey");
-                // }
-
+                // b/w key color
                 if (!getBlackKey(i%12)) {
                     row.classList.add("wKey");
                 }
@@ -230,6 +241,7 @@
                 if (xenScaleArray[i]==0) cell5.innerHTML = "•";
             }
 
+            // delete old list
             if (document.getElementById("MIDI-list").firstChild != null) {
                 document.getElementById("MIDI-list").firstChild.remove();
             }
