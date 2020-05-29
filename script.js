@@ -13,7 +13,6 @@
     var xenFreqArray = [];
 
 
-
 //=============================
 // Scale calcs, dom, etc
 //=============================
@@ -22,11 +21,15 @@
         function initPage() {
             loadVars();
 
-            makeXenArrays();
+            makeXenArrays2();
 
             makeMidiTable();
             makeScalaTable();
             makeKeyMapTable();
+
+            let kContainer = document.getElementById("key-container");
+            let kCenter = document.getElementById("keyboardCenter");
+            scrollParentToChild(kContainer,kCenter);
         }
 
         //---------------------------
@@ -34,7 +37,7 @@
         function refreshPage() {
             loadVars();
 
-            makeXenArrays();
+            makeXenArrays2();
             updateXenKeyboard();
 
             makeMidiTable();
@@ -53,6 +56,85 @@
             octDivs = Number(document.getElementById("octDivs").value);
             octMult = Number(document.getElementById("octMult").value);
         }
+
+
+
+
+        // new version of makeMIDIFreqList
+        //--------------------------
+        function makeXenArrays2() {
+            // Init xen scale and freq arrays
+            xenScaleArray = new Array(126);
+            xenFreqArray = new Array(126);
+            let midiIndex = rootMIDI;
+
+            //--------
+            // Loop through positive values first
+            let stepCounter = 0;
+            while (midiIndex < 128) {
+                xenScaleArray[midiIndex] = stepCounter;
+
+                // If this is the last step, reset stepCounter
+                if (stepCounter == octDivs-1) {
+                    stepCounter = 0;
+                } else {
+                    stepCounter++;
+                }
+
+                midiIndex++;
+            }
+
+            //--------
+            // Negative vals
+            midiIndex = rootMIDI-1;
+            stepCounter = octDivs-1;
+            while (midiIndex > -1) {
+                xenScaleArray[midiIndex] = stepCounter;
+
+                if (stepCounter == 0) {
+                    stepCounter = octDivs-1;
+                } else {
+                    stepCounter--;
+                }
+
+                midiIndex--;
+            }
+
+            for (var i=0;i<127;i++) {
+                // TK: multiple algos for calcing cFreq
+                xenFreqArray[i] = getXenFrequency(i);
+            }
+
+        }
+
+
+        //----------------------------
+        // calc note frequency
+        // fn  =  (2^(n/12))*440Hz where n = distance from 440.
+        function getXenFrequency(n) {
+            let noteOffset = n - rootMIDI;
+            //let scaleStep = Math.pow(2,(1/12));
+            let scaleStep = Math.pow(octMult,(1/octDivs));
+            let f = rootFreq * Math.pow(scaleStep, noteOffset);
+            return(f);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -116,6 +198,16 @@
         }
 
 
+
+
+
+
+
+
+
+
+
+
         //---------------------------
         // New version of build KeyTables
         function updateXenKeyboard() {
@@ -132,6 +224,7 @@
             
             let octCounter = 0;
             let xenCounter = 0;
+
             for (var i=0;i<xenFreqArray.length;i++) {
 
                 // If we're at the start of a new xen octave, add an octave cell
@@ -280,10 +373,12 @@
             s += document.getElementById("rootMIDI").value + br();
 
             // Refrence note
-            s += document.getElementById("rootMIDI").value + br();
+            // s += document.getElementById("rootMIDI").value + br();
+            s += "0" + br();
 
             // Refrence freq
-            s += document.getElementById("rootFreq").value + br();
+            // s += document.getElementById("rootFreq").value + br();
+            s += xenFreqArray[0].toFixed(5) + br();
 
             for (var i=0;i<xenFreqArray.length;i++) {
                 s+=i + br();
@@ -439,6 +534,7 @@
         // scroll parent to child
         // https://stackoverflow.com/questions/45408920/plain-javascript-scrollintoview-inside-div
         function scrollParentToChild(parent, child) {
+            console.log("test");
           // Where is the parent on page
           var parentRect = parent.getBoundingClientRect();
           // What can you see?
@@ -506,9 +602,6 @@
             var command = message.data[0];
             var note = message.data[1];
             var velocity = (message.data.length > 2) ? message.data[2] : 0; // a velocity value might not be included with a noteOff command
-
-            console.log(command + "." + note +"." + velocity);
-
 
             switch (command) {
                 case 144: // noteOn
@@ -595,7 +688,6 @@
                     osc.type = type;
 
                     osc.name = note;
-                    console.log(xenFreqArray[note]);
                     osc.frequency.value = Number(xenFreqArray[note]);
                     osc.frequency.setValueAtTime(xenFreqArray[note], audioContext.currentTime);
 
@@ -619,7 +711,6 @@
             let counter = 0;
 
             while ((found == false) && (counter < 8)) {
-                console.log("oA["+ counter+"]: " + oscArray[counter]);
 
                 if (oscArray[counter] != undefined) {
                     if (oscArray[counter].name == note) {
@@ -637,7 +728,6 @@
 
         //----------------------------
         function killAll() {
-            console.log(oscArray);
             for (var i=0;i<oscArray.length;i++) {
                 if (oscArray[i] != undefined) {
                     oscArray[i].stop();
