@@ -45,11 +45,8 @@ function noteOn(noteNum, velocity) {
     while ((found == false) && (counter < 8)) {
         if (oscArray[counter] == undefined) {
 
-            let osc = makeNewOsc(noteNum);
-            oscArray[counter] = osc;
-
-            // let voice = new SynthVoice(noteNum);
-            // oscArray[counter] = voice;
+            let voice = new SynthVoice(noteNum);
+            oscArray[counter] = voice;
             found = true;
 
         } else {
@@ -66,115 +63,61 @@ function noteOn(noteNum, velocity) {
 
 
 
-//--------------------------
-function makeNewOsc(noteNum) {
-    let now = context.currentTime;
-    let osc = context.createOscillator();
-
-    // Waveform type
-    let type = 'sine';
-    osc.type = type;
-
-    // Name for note-off
-    osc.name = noteNum;
-
-    // set freq.
-    osc.frequency.value = Number(xenFreqArray[noteNum]);
-    osc.frequency.setValueAtTime(xenFreqArray[noteNum], now);
-
-    // gain node
-    let gainEnv = context.createGain();
-
-    // attack
-    gainEnv.gain.setValueAtTime(0, now);
-    gainEnv.gain.linearRampToValueAtTime(1, now + 3);
-
-    // connections
-    osc.connect(gainEnv);
-    gainEnv.connect(masterGainNode);
-
-    // start osc
-    osc.start();
-
-    return(osc);
-}
-
-
-
 //--------------------------------
 // SynthVoice object
 function SynthVoice(noteNum) {
+    this.name = noteNum;
+    this.osc = context.createOscillator();
+    this.gainEnv = context.createGain();
+
+    // time = now
     let now = context.currentTime;
-    let osc = context.createOscillator();
 
     // Waveform type
-    let type = 'sine';
-    osc.type = type;
+    //let type = 'sine';
+    //this.osc.type = type;
+    this.osc.type = document.getElementById("wave").value;
 
-    // Name for note-off
-    osc.name = noteNum;
+    //ADSR values
+    let ampA = Number(document.getElementById("ampAttack").value);
+    let ampD = Number(document.getElementById("ampDecay").value);
+    let ampS = Number(document.getElementById("ampSustain").value);
+    this.ampR = Number(document.getElementById("ampRelease").value);
+    console.log(ampA + ", " + ampD + ", " + ampS + ", " + this.ampR);
 
     // set freq.
-    osc.frequency.value = Number(xenFreqArray[noteNum]);
-    osc.frequency.setValueAtTime(xenFreqArray[noteNum], now);
+    this.osc.frequency.value = Number(xenFreqArray[noteNum]);
+    this.osc.frequency.setValueAtTime(xenFreqArray[noteNum], now);
 
-    // gain node
-    let gainEnv = context.createGain();
-
-    // attack
-    gainEnv.gain.setValueAtTime(0, now);
-    gainEnv.gain.linearRampToValueAtTime(1, now + 3);
+    // Envelope Attack and Decay
+    this.gainEnv.gain.setValueAtTime(0, now);
+    this.gainEnv.gain.linearRampToValueAtTime(1, now + ampA);
+    this.gainEnv.gain.linearRampToValueAtTime(ampS, now + ampA + ampD);
 
     // connections
-    osc.connect(gainEnv);
-    gainEnv.connect(masterGainNode);
+    this.osc.connect(this.gainEnv);
+    this.gainEnv.connect(masterGainNode);
 
     // start osc
-    osc.start();
+    this.osc.start();
+
+    // release phase
+    this.beginRelease = function() {
+        let now = context.currentTime;
+        this.gainEnv.gain.cancelScheduledValues(now);
+        this.gainEnv.gain.setValueAtTime(this.gainEnv.gain.value, now);
+        this.gainEnv.gain.linearRampToValueAtTime(0, now + this.ampR);
+        this.osc.stop(now + this.ampR);
+    };
+
+    // When finished -- update: not needed?
+    // https://stackoverflow.com/questions/36628027/do-i-need-to-disconnect-an-oscillator-audionode-after-stop-it
+    // this.onended = function() {
+    //     console.log("osc " + this.name + " ended.");
+    // }
 
     return(this);
 }
-
-
-
-
-
-
-
-//--------------------------
-// envelope 
-var EnvelopeGenerator = (function(context) {
-  function EnvelopeGenerator() {
-    this.attackTime = 1.00;
-    this.releaseTime = 1.00;
-  };
-
-  EnvelopeGenerator.prototype.trigger = function() {
-    now = context.currentTime;
-    this.param.cancelScheduledValues(now);
-    this.param.setValueAtTime(0, now);
-    this.param.linearRampToValueAtTime(1, now + this.attackTime);
-    this.param.linearRampToValueAtTime(0, now + this.attackTime + this.releaseTime);
-  };
-
-  EnvelopeGenerator.prototype.connect = function(param) {
-    this.param = param;
-  };
-
-  return EnvelopeGenerator;
-})(context);
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -197,7 +140,7 @@ function noteOff(note) {
 
         if (oscArray[counter] != undefined) {
             if (oscArray[counter].name == note) {
-                oscArray[counter].stop();
+                oscArray[counter].beginRelease();
                 oscArray[counter] = undefined;
                 found = true;
             }
@@ -238,7 +181,7 @@ function updateOscGui() {
             var s = "";
             s += oscArray[i].name;
             s += " : ";
-            s += oscArray[i].frequency.value.toFixed(5);
+            s += oscArray[i].osc.frequency.value.toFixed(5);
             d.innerHTML = s;
         }
     }
