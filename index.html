@@ -22,6 +22,7 @@
 
     <!--js-->
     <script src="script.js"></script> 
+    <script src="midi-audio.js"></script>
 
     <style>
         body {
@@ -144,7 +145,7 @@
     <div class="main">
         <div class="fullWidth bd">
             <label for="volumeSlider">VOLUME</label>
-            <input type="range" id="volumeSlider" class="fullWidth slider" min="0.000" max="0.500" step="0.001" value="0.150" oninput="chVolume(this.value);">
+            <input type="range" id="volumeSlider" class="fullWidth slider" min="-1.000" max="0.000" step="0.001" value="0.150" oninput="chVolume(this.value);">
         </div>
 
         <div class="osc-divs bd">
