@@ -1,16 +1,9 @@
-
 //=============================
 // Audio
 //=============================
 let context = new (window.AudioContext || window.webkitAudioContext);
 let masterGainNode = null;
 
-let noteFreq = null;
-let customWaveform = null;
-let sineTerms = null;
-let cosineTerms = null;
-
-var oscArray = new Array(8);
 var voiceArray = new Array(8);
 
 
@@ -19,10 +12,6 @@ function audioSetup() {
     masterGainNode = context.createGain();
     masterGainNode.connect(context.destination);
     masterGainNode.gain.setValueAtTime(0.2,context.currentTime);
-
-    // sineTerms = new Float32Array([0, 0, 1, 0, 1]);
-    // cosineTerms = new Float32Array(sineTerms.length);
-    // customWaveform = context.createPeriodicWave(cosineTerms, sineTerms);
 
     updateOscGui();
 }
@@ -43,10 +32,10 @@ function noteOn(noteNum, velocity) {
     let found = false;
     let counter = 0;
     while ((found == false) && (counter < 8)) {
-        if (oscArray[counter] == undefined) {
+        if (voiceArray[counter] == undefined) {
 
             let voice = new SynthVoice(noteNum);
-            oscArray[counter] = voice;
+            voiceArray[counter] = voice;
             found = true;
 
         } else {
@@ -83,7 +72,7 @@ function SynthVoice(noteNum) {
     let ampD = Number(document.getElementById("ampDecay").value);
     let ampS = Number(document.getElementById("ampSustain").value);
     this.ampR = Number(document.getElementById("ampRelease").value);
-    console.log(ampA + ", " + ampD + ", " + ampS + ", " + this.ampR);
+    // console.log(ampA + ", " + ampD + ", " + ampS + ", " + this.ampR);
 
     // set freq.
     this.osc.frequency.value = Number(xenFreqArray[noteNum]);
@@ -128,8 +117,6 @@ function SynthVoice(noteNum) {
 
 
 
-
-
 //----------------------------
 function noteOff(note) {
 
@@ -138,10 +125,10 @@ function noteOff(note) {
 
     while ((found == false) && (counter < 8)) {
 
-        if (oscArray[counter] != undefined) {
-            if (oscArray[counter].name == note) {
-                oscArray[counter].beginRelease();
-                oscArray[counter] = undefined;
+        if (voiceArray[counter] != undefined) {
+            if (voiceArray[counter].name == note) {
+                voiceArray[counter].beginRelease();
+                voiceArray[counter] = undefined;
                 found = true;
             }
         }
@@ -157,10 +144,10 @@ function noteOff(note) {
 
 //----------------------------
 function killAll() {
-    for (var i=0;i<oscArray.length;i++) {
-        if (oscArray[i] != undefined) {
-            oscArray[i].stop();
-            oscArray[i] = undefined;
+    for (var i=0;i<voiceArray.length;i++) {
+        if (voiceArray[i] != undefined) {
+            voiceArray[i].stop();
+            voiceArray[i] = undefined;
         }
     }
     updateOscGui();
@@ -173,21 +160,19 @@ function killAll() {
 
 //----------------------------
 function updateOscGui() {
-    for (var i=0;i<oscArray.length;i++) {
+    for (var i=0;i<voiceArray.length;i++) {
         var d = document.getElementById("osc"+i);
-        if (oscArray[i] == undefined) {
+        if (voiceArray[i] == undefined) {
             d.innerHTML = "- -";
         } else {
             var s = "";
-            s += oscArray[i].name;
+            s += voiceArray[i].name;
             s += " : ";
-            s += oscArray[i].osc.frequency.value.toFixed(5);
+            s += voiceArray[i].osc.frequency.value.toFixed(5);
             d.innerHTML = s;
         }
     }
 }
-
-
 
 
 
@@ -226,14 +211,21 @@ function chVolume(x) {
 
 //=============================
 // WEB MIDI 
+// incl. https://github.com/cwilso/WebMIDIAPIShim/tree/gh-pages/build
 //=============================
+function webMIDISetup() {
+
+}
+
+navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+
 if (navigator.requestMIDIAccess) {
     console.log('This browser supports WebMIDI!');
 } else {
     console.log('WebMIDI is not supported in this browser.');
+    // let webMIDIp = document.getElementById("webMIDIStatus");
+    // webMIDIp.innerHTML="No WebMIDI available on this browser :(";
 }
-
-navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
 
 function onMIDIFailure() {
     console.log('Could not access your MIDI devices.');

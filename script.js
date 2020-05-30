@@ -535,7 +535,6 @@
         // scroll parent to child
         // https://stackoverflow.com/questions/45408920/plain-javascript-scrollintoview-inside-div
         function scrollParentToChild(parent, child) {
-            console.log("test");
           // Where is the parent on page
           var parentRect = parent.getBoundingClientRect();
           // What can you see?

@@ -94,12 +94,13 @@
 	/* Inputs */
 	.input-div {
 	    flex-grow:1;
+	    flex-basis: 0;
 	    text-align: center;
 	}
 
 	input {
 	    font-family: robotto mono, andale mono, monospace;
-	    width:7em;
+	    width:100%;
 	    font-size: large;
 
 	    background:rgba(255,255,255,0.6);
@@ -110,6 +111,9 @@
 
 	    display:block;
 	    box-sizing:border-box;
+
+	    text-align: center;
+	    margin:0px auto;
 	}
 
 	label {

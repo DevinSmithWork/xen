@@ -24,6 +24,9 @@
     <script src="script.js"></script> 
     <script src="midi-audio.js"></script>
 
+    <!-- web MIDI polyfill -->
+    <script src="WebMIDIAPI.min.js"></script>
+
     <style>
         body {
             font-family: robotto mono, andale mono, monospace;
@@ -42,7 +45,7 @@
 
 
 
-<body onload="initPage();audioSetup();">
+<body onload="initPage();audioSetup();webMIDISetup();">
 
     <!--
         RESOURCES:
@@ -80,9 +83,6 @@
 
 <!--------------------------->
 <h2>SCALE SETUP</h2>
-    <p class="tbd">
-        TBD: algo select for xen freq.
-    </p>
 
     <div class="main">
         <div class="input-div bd">
@@ -140,8 +140,7 @@
 
 
     <h2>SYNTH</h2>
-    <p>WEB MIDI support: Chrome, Edge, Opera, Android web viewer</p>
-    <p class="tbd">TBD: lol like everything. I'll prolly end up implement a library like Tone.js or something</p>
+    <p class="tbd">WEB MIDI: Chrome, Edge, Opera, Android</p>
     <div class="main">
         <div class="fullWidth bd">
             <label for="volumeSlider">MASTER VOLUME</label>
