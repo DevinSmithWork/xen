@@ -515,7 +515,6 @@
             return s;
         }
 
-
         // Syncs slider and numerical values
         function syncInputs(x, y, z) {
             var slider = document.getElementById(x);

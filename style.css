@@ -26,6 +26,10 @@
 	    flex-wrap:wrap;
 	}
 
+	.topSpacer {
+		margin-top:1em;
+	}
+
 	.bd {
 		margin:0.25em;
 	    padding:0.25em;
@@ -45,6 +49,10 @@
 
 	.hide {
 		display:none;
+	}
+
+	.yellow {
+		background:yellow;
 	}
 
 
@@ -210,8 +218,8 @@
 	/* Oscilator styles */
 	.osc-divs {
 	    flex-grow:1;
+	    flex-basis: 0;
 	    text-align: center;
-	    width:fixed;
 	}
 
 

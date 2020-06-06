@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <title>Xen Tool</title>
+    <title>XENNY FROM THE BLOCK</title>
     <meta name="description" content="Xen Edo Scala Tool">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -61,9 +61,9 @@
     -->
 
     <h1>XENNY FROM THE BLOCK</h1>
-    <p class="tbd">Don't be fooled by the rocks that I got<br>I'm just a tool for building &amp; demoing xenharmonic scales.</p>
-    <br>
-    <p class="tbd">This is a work in progress &amp; there's still a lot of kinks to work out.<br><a href="mailto:devin.smith.work@gmail.com">Email me</a> if you have feedback.</p>
+    <p class="tbd">Don't be fooled by the rocks that I got,<br>I'm still a xenharmonic web synth.
+    <br><br>
+This is a work in progress &amp; there's still some kinks to work out.<br><br><a href="mailto:devin.smith.work@gmail.com">Email me</a> if you have feedback.</p>
     <!-- 
     <p>
         <b>ABOUT:</b> This is a tool for creating Scala .SCA and .KYB files for xenharmonic scales in equal divisions of "variable octaves."
@@ -140,7 +140,7 @@
 
 
     <h2>SYNTH</h2>
-    <p class="tbd">WEB MIDI: Chrome, Edge, Opera, Android</p>
+    <p class="tbd">WEB MIDI: Chrome, Edge, Opera, Android<br>TBD: Voice stealing</p>
     <div class="main">
         <div class="fullWidth bd">
             <label for="volumeSlider">MASTER VOLUME</label>
@@ -148,14 +148,14 @@
         </div>
     </div>
 
-    <div class="main">
+    <div class="main topSpacer">
         <div class="input-div bd">
-            <label class="side" for="waveform">WAVEFORM</label>
-            <select name="waveform" id="wave">
+            <label class="side vertCenter" for="waveform">WAVEFORM</label>
+            <select name="waveform" class="vertCenter" id="wave">
                 <option value="sine">Sine</option>
                 <option value="square">Square</option>
                 <option value="sawtooth">Saw</option>
-                <option value="triangle">Tri</option>
+                <option value="triangle" selected>Tri</option>
             </select>
         </div>
     </div>
@@ -163,22 +163,58 @@
     <div class="main">
         <div class="input-div bd">
             <label for="ampAttack">Amp Attack</label>
-            <input type="range" class="fullWidth slider" id="ampAttack" class="smallInput" min="0.00" max="5.00" step="0.01" value="1.00"></input>
+            <input type="range" class="fullWidth slider" id="ampAttack" class="smallInput" min="0.01" max="5.00" step="0.01" value="1.00"></input>
         </div>
         <div class="input-div bd">
             <label for="ampDecay">Amp Decay</label>
-            <input type="range" class="fullWidth slider" id="ampDecay" class="smallInput" min="0.00" max="5.00" step="0.01" value="1.00"></input>
+            <input type="range" class="fullWidth slider" id="ampDecay" class="smallInput" min="0.01" max="5.00" step="0.01" value="0.75"></input>
         </div>
         <div class="input-div bd">
             <label for="ampSustain">Amp Sustain</label>
-            <input type="range" class="fullWidth slider" id="ampSustain" class="smallInput" min="0.00" max="1.00" step="0.01" value="0.50"></input>
+            <input type="range" class="fullWidth slider" id="ampSustain" class="smallInput" min="0.01" max="1.00" step="0.01" value="0.5"></input>
         </div>
         <div class="input-div bd">
             <label for="ampRelease">Amp Release</label>
-            <input type="range" class="fullWidth slider" id="ampRelease" class="smallInput" min="0.00" max="10.00" step="0.01" value="1"></input>
+            <input type="range" class="fullWidth slider" id="ampRelease" class="smallInput" min="0.01" max="10.00" step="0.01" value="5.0"></input>
         </div>
     </div>
+
+    <div class="main topSpacer">
+        <div class="input-div bd">
+            <label for="filterCutoff">FILTER CUTOFF</label>
+            <input type="range" id="filterCutoff" class="fullWidth slider" min="20" max="20000" step="1" value="15000">
+        </div>
+        <div class="input-div bd">
+            <label for="filterRes">FILTER RES.</label>
+            <input type="range" id="filterRes" class="fullWidth slider" min="0.01" max="2500" step="0.01" value="0.5">
+        </div>
+    </div>
+
     <div class="main">
+        <div class="input-div bd">
+            <label for="filterAttack">Filter Attack</label>
+            <input type="range" class="fullWidth slider" id="filterAttack" class="smallInput" min="0.01" max="5.00" step="0.01" value="1.50"></input>
+        </div>
+        <div class="input-div bd">
+            <label for="filterDecay">Filter Decay</label>
+            <input type="range" class="fullWidth slider" id="filterDecay" class="smallInput" min="0.01" max="5.00" step="0.01" value="1.50"></input>
+        </div>
+        <div class="input-div bd">
+            <label for="filterSustain">Filter Sustain</label>
+            <input type="range" class="fullWidth slider" id="filterSustain" class="smallInput" min="0.01" max="1.000" step="0.01" value="0.75"></input>
+        </div>
+        <div class="input-div bd">
+            <label for="filterRelease">Filter Release</label>
+            <input type="range" class="fullWidth slider" id="filterRelease" class="smallInput" min="0.01" max="10.00" step="0.1" value="5.0"></input>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="main topSpacer">
         <div class="osc-divs bd">
             <div id="osc0"></div>
             <div id="osc1"></div>
@@ -193,7 +229,7 @@
             <div id="osc7"></div>
         </div>
     </div>
-    <button id="kill" onclick="killAll();">KILL ALL OSC</button>
+    <button id="kill" class="topSpacer" onclick="killAll();">KILL ALL OSC</button>
 
 
 
@@ -203,7 +239,7 @@
 
 <h2>TABLES</h2>
     <div class="main tbd">
-        TBD: Doublecheck Scala output on something.
+        TBD: Check Scala output
     </div>
     <div class="main">
         <div class="input-div bd grow">
