@@ -3,6 +3,7 @@
 //=============================
 let context = new (window.AudioContext || window.webkitAudioContext);
 let masterGainNode = null;
+let LFOOsc = null;
 
 var voiceArray = new Array(8);
 var voiceStatusArray = new Array(8);
@@ -10,10 +11,17 @@ var voiceStatusArray = new Array(8);
 
 //----------------------------
 function audioSetup() {
+    // Global gain
     masterGainNode = context.createGain();
     masterGainNode.connect(context.destination);
     masterGainNode.gain.setValueAtTime(0.2,context.currentTime);
 
+    // Globla LFO
+    LFOOsc = context.createOscillator();
+    LFOOsc.frequency.setValueAtTime(getLog("LFORate"),context.currentTime);
+    LFOOsc.start();
+
+    // Init voice status array
     for (var i=0;i<voiceStatusArray.length;i++) {
       voiceStatusArray[i] = new voiceStatus();
     }
@@ -118,16 +126,21 @@ function SynthVoice(noteNum) {
     this.name = noteNum;
     this.startTime = now;
 
+    // Audio node setups
     this.osc = context.createOscillator();
     this.gainEnv = context.createGain();
     this.filter = context.createBiquadFilter();
+    this.LFORamp = context.createGain();
 
     // Waveform
     this.osc.type = document.getElementById("wave").value;
 
     // Xen freq.
-    this.osc.frequency.value = Number(xenFreqArray[noteNum]);
-    this.osc.frequency.setValueAtTime(xenFreqArray[noteNum], now);
+    // let oscFreq = Number(xenFreqArray[noteNum]) * getDriftMultiplier();
+    let oscFreq = Number(xenFreqArray[noteNum]);
+    this.osc.frequency.value = oscFreq;
+    this.osc.frequency.setValueAtTime(oscFreq, now);
+
 
     //-------------------------
     // Amp
@@ -159,10 +172,24 @@ function SynthVoice(noteNum) {
     this.filter.frequency.linearRampToValueAtTime(this.filterCutoff, now + this.filterEnv.a);
     this.filter.frequency.linearRampToValueAtTime(this.filterCutoff * this.filterEnv.s, now + this.filterEnv.a + this.filterEnv.d); 
 
+    // LFO Ramp
+    this.LFORamp.gain.setValueAtTime(0, now);
+    this.LFORamp.gain.linearRampToValueAtTime(getLog("LFOAmount"), now + getLog("LFORamp"));
+
     // Connections
     this.osc.connect(this.filter);
     this.filter.connect(this.gainEnv);
     this.gainEnv.connect(masterGainNode);
+
+
+    LFOOsc.connect(this.LFORamp);
+    this.LFORamp.connect(this.osc.frequency);
+
+    // LFOOsc.connect(this.osc.frequency);
+    // LFOOsc.connect(this.filter.frequency);
+    // LFOOsc.connect(this.gainEnv.gain);
+
+
 
     // start osc
     this.osc.start();
@@ -303,9 +330,18 @@ function chVolume(x) {
     masterGainNode.gain.setValueAtTime(g,context.currentTime);
 }
 
+//------------------
+// LFO Rate
+function chLFORate() {
+  LFOOsc.frequency.setValueAtTime(getLog("LFORate"),context.currentTime)
+}
 
 
-
+//----------------------------
+// Function to generate random number  
+function rand(min, max) {  
+    return Math.random() * (max - min) + min; 
+}  
 
 
 //----------------
@@ -325,6 +361,16 @@ function getLog(x) {
     let logVal = Math.exp(minLog + scale*(value-min));
 
     return(logVal);
+}
+
+
+function getDriftMultiplier() {
+  let d = document.getElementById("Drift").value;
+  let dRand = Math.random() * d;
+  let coin = Math.random();
+  if (coin > 0.5) {
+
+  }
 }
 
 

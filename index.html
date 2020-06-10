@@ -209,8 +209,24 @@ This is a work in progress &amp; there's still some kinks to work out.<br><br><a
         </div>
     </div>
 
-
-
+    <div class="main topSpacer">
+        <div class="input-div bd">
+            <label for="LFORate">LFO RATE</label>
+            <input type="range" id="LFORate" class="fullWidth slider" min="0.1" max="600" step=".1" value="260" oninput="chLFORate();">
+        </div>
+        <div class="input-div bd">
+            <label for="LFOAmount">LFO DEPTH</label>
+            <input type="range" id="LFOAmount" class="fullWidth slider" min="0.1" max="300" step="0.1" value="150">
+        </div>
+        <div class="input-div bd">
+            <label for="LFORamp">LFO RAMP</label>
+            <input type="range" id="LFORamp" class="fullWidth slider" min="0.01" max="10.00" step="0.01" value="5.00">
+        </div>
+        <div class="input-div bd">
+            <label for="Drift">FREQ. RAND.</label>
+            <input type="range" id="Drift" class="fullWidth slider" min="1.0" max="2.0" step="0.1" value="1.0">
+        </div>
+    </div>
 
 
 
