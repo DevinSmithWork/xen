@@ -136,8 +136,8 @@ function SynthVoice(noteNum) {
     this.osc.type = document.getElementById("wave").value;
 
     // Xen freq.
-    // let oscFreq = Number(xenFreqArray[noteNum]) * getDriftMultiplier();
-    let oscFreq = Number(xenFreqArray[noteNum]);
+    let oscFreq = Number(xenFreqArray[noteNum]) * getDriftMultiplier();
+    // let oscFreq = Number(xenFreqArray[noteNum]);
     this.osc.frequency.value = oscFreq;
     this.osc.frequency.setValueAtTime(oscFreq, now);
 
@@ -337,13 +337,6 @@ function chLFORate() {
 }
 
 
-//----------------------------
-// Function to generate random number  
-function rand(min, max) {  
-    return Math.random() * (max - min) + min; 
-}  
-
-
 //----------------
 function getLog(x) {
 
@@ -364,12 +357,27 @@ function getLog(x) {
 }
 
 
-function getDriftMultiplier() {
-  let d = document.getElementById("Drift").value;
-  let dRand = Math.random() * d;
-  let coin = Math.random();
-  if (coin > 0.5) {
+//----------------------------
+// Function to generate random number  
+function rand(min, max) {  
+    return Math.random() * (max - min) + min; 
+}  
 
+//----------------------------
+// Returns the drift multiplier (0.5 to 1.5)
+function getDriftMultiplier() {
+  // Slider Percentage, from .01 to 1.0
+  // let sliderValue = document.getElementById("Drift").value;
+  let sliderValue = getLog("Drift");
+
+  // Find the percentage of 0 - 0.5
+  let randRange = sliderValue * 0.5;
+
+  // Coin flip for +/-
+  if ((Math.random()) > 0.5) {
+    return(1.00 + Number(rand(0,randRange)));
+  } else {
+    return(1.00 - Number(rand(0,randRange)));
   }
 }
 
