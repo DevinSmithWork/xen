@@ -1,5 +1,5 @@
 # Xenny From The Block
-Don't be fooled by the rocks that I got -- I'm still I'm still a web tool for quickly creating and demoing xenharmonic scales.
+Don't be fooled by the rocks that I got -- I'm still I'm still a web tool for quickly creating and demoing xenharmonic scales. This page is currently live at [http://devinsmith.work/xen](http://devinsmith.work/xen/)
 
 ## Web Midi
 Your xen scale is playable via web MIDI  -- [browser support list](https://developer.mozilla.org/en-US/docs/Web/API/MIDIAccess) -- although at present, the synth implementation is extremely minimal.
